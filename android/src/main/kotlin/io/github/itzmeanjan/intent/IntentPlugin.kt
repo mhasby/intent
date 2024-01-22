@@ -27,7 +27,7 @@ class IntentPlugin(private val registrar: Registrar, private val activity: Activ
         @JvmStatic
         fun registerWith(registrar: Registrar) {
             val channel = MethodChannel(registrar.messenger(), "intent")
-            channel.setMethodCallHandler(IntentPlugin(registrar, registrar.activity()))
+            channel.setMethodCallHandler(IntentPlugin(registrar, registrar.activity()!!))
         }
 
     }
@@ -41,21 +41,21 @@ class IntentPlugin(private val registrar: Registrar, private val activity: Activ
                 999 -> {
                     if (resultCode == Activity.RESULT_OK) {
                         val filePaths = mutableListOf<String>()
-                        if (intent.clipData != null) {
+                        if (intent!!.clipData != null) {
                             var i = 0
-                            while (i < intent.clipData?.itemCount!!) {
+                            while (i < intent!!.clipData?.itemCount!!) {
                                 if (intent.type == ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
-                                    filePaths.add(resolveContacts(intent.clipData?.getItemAt(i)?.uri!!))
+                                    filePaths.add(resolveContacts(intent!!.clipData?.getItemAt(i)?.uri!!))
                                 else
-                                    filePaths.add(uriToFilePath(intent.clipData?.getItemAt(i)?.uri!!))
+                                    filePaths.add(uriToFilePath(intent!!.clipData?.getItemAt(i)?.uri!!))
                                 i++
                             }
                             activityCompletedCallBack?.sendDocument(filePaths)
                         } else {
-                            if (intent.type == ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
-                                filePaths.add(resolveContacts(intent.data!!))
+                            if (intent!!.type == ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+                                filePaths.add(resolveContacts(intent!!.data!!))
                             else
-                                filePaths.add(uriToFilePath(intent.data!!))
+                                filePaths.add(uriToFilePath(intent!!.data!!))
                             activityCompletedCallBack?.sendDocument(filePaths)
                         }
                         true
